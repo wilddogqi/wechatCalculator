@@ -1,0 +1,125 @@
+<style lang="less">
+page {
+  background: #DD5E89;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to top, #F7BB97, #DD5E89);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to top, #F7BB97, #DD5E89); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+.container {
+  .input-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 120rpx;
+    width: 100%;
+    padding-top: 20rpx;
+
+    .title {
+      color: #FFF;
+      font-size: 28rpx;
+      line-height: 30rpx;
+      height: 30rpx;
+      margin: 0rpx 40rpx 0rpx 40rpx;
+    }
+    .input {
+      color: #FFF;
+      font-size: 50rpx;
+      line-height: 90rpx;
+      height: 90rpx;
+      border-bottom-style: solid;
+      border-bottom-width: 1rpx;
+      border-bottom-color: #F2F2F2;
+      margin: 0rpx 40rpx 0rpx 40rpx;
+    }
+  }
+
+  .btn {
+    margin: 40rpx 40rpx 0rpx 40rpx;
+    color: #FFF;
+    width: 670rpx;
+    border: 2rpx solid #FFF;
+  }
+  .btn-normal {
+    background-color: rgba(221, 94, 137, 1);
+  }
+  .btn-disabled {
+    background-color: rgba(221, 94, 137, 0.1);
+    opacity: 0.3;
+  }
+  .btn-hover {
+    background-color: rgba(221, 94, 137, 0.1);
+  }
+
+  .result-container {
+    display: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 24rpx;
+
+    .value {
+      font-size: 40rpx;
+      color: #FFF;
+      width: 700rpx;
+      text-align: center;
+      line-height: 40rpx;
+    }
+  }
+}
+</style>
+<template>
+  <view class="container">
+    <view class="input-field">
+      <text class="title">数值2:</text>
+      <input class="input" type="digit" bindinput="input2Changed" focus ></input>
+    </view>
+    <view class="input-field">
+      <text class="title">数值1:</text>
+      <input class="input" type="digit" bindinput="input1Changed"></input>
+    </view>
+    <button class="btn {{ (!value2 || !value1) ? 'btn-disabled' : 'btn-normal' }}"  hover-class="btn-hover" plain="true" bindtap="calculate">计算</button>
+    <view wx:if="{{showResult}}" class="result-container">
+      <text class="value"> 环比{{ result > 0 ? '增长' : '下降' }} {{result ? result : ''}} %</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTextStyle: 'white',
+      navigationBarTitleText: '环比计算器',
+      navigationBarBackgroundColor: '#DD5E89',
+      disableScroll: false
+    }
+
+    data = {
+      showResult: false,
+      value2: null,
+      value1: null,
+      result: null
+    }
+
+    methods = {
+      input1Changed (e) {
+        this.value1 = Number(e.detail.value);
+        this.showResult = false;
+      },
+      input2Changed (e) {
+        this.value2 = Number(e.detail.value);
+        this.showResult = false;
+      },
+      calculate () {
+        if (!this.value2 || !this.value1) {
+          return;
+        }
+        var result = (this.value2 - this.value1)/this.value1/100*10000;
+        this.result = result.toFixed(2);
+        this.showResult = true;
+      }
+    }
+  }
+</script>
